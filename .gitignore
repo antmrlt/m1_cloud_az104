@@ -1,0 +1,14 @@
+# Fichiers d'état de Terraform
+*.tfstate
+*.tfstate.*
+
+# Dossier de sauvegarde local
+.terraform/
+
+# Crash logs de Terraform
+crash.log
+
+# Fichiers générés par l'IDE
+*.swp
+*.vscode/
+.idea/
