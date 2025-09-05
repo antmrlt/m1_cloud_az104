@@ -4,7 +4,11 @@
 
 - cette connexion ne doit demander aucun password : votre clé a été ajoutée à votre Agent SSH
 
+<<<<<<< HEAD
 ```shell
+=======
+```
+>>>>>>> cdc11f89c4d87c9198dd89e9c02f84be9ae34657
 ssh -i C:\Users\antoi\.ssh\cloud_tp1 azureuser@4.178.136.116
 The authenticity of host '4.178.136.116 (4.178.136.116)' can't be established.
 ED25519 key fingerprint is SHA256:eNa4cU5aWvRZjxtykb7CI6OusUDQ6B3JAvZElOT1Eb8.
@@ -25,7 +29,11 @@ azureuser@cloudTP1:~$
 
 🌞 **Créez une VM depuis le Azure CLI**
 
+<<<<<<< HEAD
 ```shell
+=======
+```
+>>>>>>> cdc11f89c4d87c9198dd89e9c02f84be9ae34657
 $ az group create --location francecentral --name tp1leo
 {
   "id": "/subscriptions/142f1e87-3a7***********c6610/resourceGroups/tp1leo",
@@ -57,8 +65,13 @@ Selecting "northeurope" may reduce your costs. The region you've selected may 
 
 🌞 **Assurez-vous que vous pouvez vous connecter à la VM en SSH sur son IP publique**
 
+<<<<<<< HEAD
 ```shell
 $ ssh -i C:\Users\antoi\.ssh\cloud_tp1 antna@**.**.**.**
+=======
+```
+ssh -i C:\Users\antoi\.ssh\cloud_tp1 antna@**.**.**.**
+>>>>>>> cdc11f89c4d87c9198dd89e9c02f84be9ae34657
 The authenticity of host '**.**.**.** (**.**.**.**)' can't be established.
 ED25519 key fingerprint is SHA256:bBbibCEUGVfn5UnbN2xjXAJ/REl5OQum2AxXannZCjg.
 This key is not known by any other names.
@@ -78,6 +91,7 @@ antna@cli1:~$
 
 - **...du service `walinuxagent.service`**
 
+<<<<<<< HEAD
 ```shell
 antna@cli1:~$ systemctl status walinuxagent.service
 Warning: The unit file, source configuration file or drop-ins of walinuxagent.service changed on disk. Run 'systemctl d>
@@ -241,6 +255,42 @@ Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 📁 **Fichiers à rendre**
 
 -> [dossier Terraform](./Terraform/)
+=======
+???+ note
+
+    Ce service est spécifique à Azure. Il permet à Azure d'interagir avec la VM.
+
+- **...du service `cloud-init.service`**
+
+???+ note
+
+    `cloud-init` est un outil **très standard et répandu dans tous les environnements Cloud**.  
+    Il permet d'effectuer de la configuration automatiquement **au premier lancement de la VM**.  
+    C'est **lui qui a créé votre utilisateur et déposé votre clé pour se co en SSH !**  
+    Vous pouvez vérifier qu'il s'est bien déroulé avec la commande `cloud-init status`
+
+## 3. Terraforming ~~planets~~ infrastructures
+
+**Une dernière section pour jouer avec Terraform,** on se contente là encore de simplement créer une VM Azure.
+
+???+ tip
+
+    Je vous donne en [section 4 juste en dessous](#4-exemple-dutilisation-azure-terraform) un exemple de setup pour les fichiers Terraform, setup que je vous recommande d'utiliser pour créer une VM dans Azure avec Terraform.  
+    Un simple déploiement de une VM prend déjà pas mal de lignes : on déclare **toutes les ressources Azure explicitement**.
+
+🌞 **Utilisez Terraform pour créer une VM dans Azure**
+
+- j'veux la suite de commande `terraform` utilisée dans le compte-rendu
+
+???+ note
+
+    Vous pouvez couper un peu l'ouput de votre `terraform apply` pour le compte-rendu, il est immense :d
+
+📁 **Fichiers à rendre**
+
+- `main.tf`
+- tout autre fichier utilisé par Terraform (je vous propose des fichiers de base plus bas)
+>>>>>>> cdc11f89c4d87c9198dd89e9c02f84be9ae34657
 
 🌞 **Prouvez avec une connexion SSH sur l'IP publique que la VM est up**
 
