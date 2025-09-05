@@ -1,0 +1,5 @@
+resource_group_name = "tp1leoTerraform"
+admin_username = "antnaTerraform"
+public_key_path = "./id_tpleo.pub"
+location = "francecentral"
+subscription_id = "142f1e87-3a************ff2ec6610"
