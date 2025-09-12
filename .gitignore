@@ -2,8 +2,10 @@
 *.tfstate
 *.tfstate.*
 
-# Dossier de sauvegarde local
+# Terraform files
 .terraform/
+.terraform.lock.hcl
+terraform.tfvars
 
 # Crash logs de Terraform
 crash.log

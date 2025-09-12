@@ -22,6 +22,15 @@ resource "azurerm_subnet" "main" {
   address_prefixes     = ["10.0.1.0/24"]
 }
 
+resource "azurerm_public_ip" "main" {
+  name                = "vm-ip"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  allocation_method   = "Dynamic"
+  sku                 = "Basic"
+  domain_name_label   = "karambarbar"
+}
+
 resource "azurerm_network_interface" "main" {
   name                = "vm-nic"
   location            = azurerm_resource_group.main.location
@@ -35,16 +44,6 @@ resource "azurerm_network_interface" "main" {
   }
 }
 
-resource "azurerm_public_ip" "main" {
-  name                = "vm-ip"
-  location            = azurerm_resource_group.main.location
-  resource_group_name = azurerm_resource_group.main.name
-  allocation_method   = "Dynamic"
-  sku                 = "Basic"
-
-  domain_name_label   = "karambarbar"
-}
-
 resource "azurerm_linux_virtual_machine" "main" {
   name                = "cliTerraform"
   resource_group_name = azurerm_resource_group.main.name
@@ -54,6 +53,10 @@ resource "azurerm_linux_virtual_machine" "main" {
   network_interface_ids = [
     azurerm_network_interface.main.id,
   ]
+
+  identity {
+    type = "SystemAssigned"
+  }
 
   admin_ssh_key {
     username   = var.admin_username
@@ -72,4 +75,28 @@ resource "azurerm_linux_virtual_machine" "main" {
     sku       = "20_04-lts"
     version   = "latest"
   }
+}
+
+resource "azurerm_log_analytics_workspace" "main" {
+  name                = "law-${var.resource_group_name}"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
+}
+
+resource "azurerm_virtual_machine_extension" "oms" {
+  name                 = "LinuxDiagnostic"
+  virtual_machine_id   = azurerm_linux_virtual_machine.main.id
+  publisher            = "Microsoft.EnterpriseCloud.Monitoring"
+  type                 = "OmsAgentForLinux"
+  type_handler_version = "1.13"
+
+  settings = jsonencode({
+    workspaceId = azurerm_log_analytics_workspace.main.workspace_id
+  })
+
+  protected_settings = jsonencode({
+    workspaceKey = azurerm_log_analytics_workspace.main.primary_shared_key
+  })
 }

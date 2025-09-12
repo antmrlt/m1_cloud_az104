@@ -21,7 +21,6 @@ resource "azurerm_network_security_group" "vm_nsg" {
   }
 }
 
-# Attache le NSG à la NIC de ta VM
 resource "azurerm_network_interface_security_group_association" "vm_nsg_assoc" {
   network_interface_id      = azurerm_network_interface.main.id
   network_security_group_id = azurerm_network_security_group.vm_nsg.id
