@@ -40,7 +40,7 @@ resource "azurerm_network_interface_security_group_association" "vm_nsg_assoc" {
 - la sortie du `terraform apply` (ce qu'affiche votre `output.tf`)
 
 ```sh
-terraform apply
+$ terraform apply
 
 Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the
 following symbols:
