@@ -52,26 +52,5 @@ PING 192.168.69.69 (192.168.69.69) 56(84) bytes of data.
 
 🌞 **Téléchargez `tcpdump` sur l'un des noeuds KVM**
 
-- effectuez deux captures, pendant que les VMs sont en train de se ping :
-
-    - **une qui capture le trafic de l'interface réelle** : `eth1` probablement (celle qui a l'IP host-only, celle qui porte `10.3.1.22` sur `kvm2` par exemple)
-    - **une autre qui capture le trafic de l'interface bridge VXLAN**
-
-      - on l'a appelée `vxlan-bridge` dans le TP
-
-- petit rappel d'une commande `tcpdump` :
-
-```bash
-# capturer le trafic de eth1, et l'enregistrer dans un fichier yo.pcap
-tcpdump -i eth1 -w yo.pcap
-```
-
-➜ **Analysez les deux captures**
-
-- dans la capture de `eth1` vous devriez juste voir du trafic UDP entre les deux noeuds
-
-    - si vous regardez bien, vous devriez que ce trafic UDP contient lui-même des trames
-
-- dans la capture de `vxlan-bridge`, vous devriez voir les "vraies" trames échangées par les deux VMs
-
-![VXLAN](./img/vxlan.jpg)
+➜ [pcap enp0s8](/enp0s8.pcap)  
+➜ [pcap vxlan](/vxlan.pcap)
