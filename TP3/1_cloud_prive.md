@@ -32,147 +32,37 @@ rtt min/avg/max/mdev = 9.802/12.046/16.368/3.056 ms
 [bingo@frontend ~]$
 ```
 
-### 2. Noeud Frontend
-
-???+ note
-
-    Il n'y a rien à faire pour le moment, le setup réel commence en partie II.  
-    Je vous explique un peu comment fonctionne le machin pour le moment !
-
-Le noeud `frontend.one` expose une interface Web sexy (oupa?) qui permet de contrôler la plateforme.
-
-C'est depuis là qu'on fera nos premiers pas pour :
-
-- créer un réseau
-- télécharger des templates de VMs
-- ajouter des noeuds de virtu au cluster (nos noeuds KVM)
-- et surtout, créer des VMs !
-
-### 3. Noeuds KVM
-
-Les noeuds `kvm1.one` et `kvm2.one` sont des VMs avec qemu/KVM installés, qui à deux, forment l'hyperviseur natif qu'on utilise sur des systèmes Linux.
-
-???+ info
-
-    On parle souvent juste de "hyperviseur KVM" bien que qemu soit systématiquement présent dans le mix.  
-    KVM c'est la feature du kernel qui permet de gérer des environnements virtuels.  
-    `qemu` est l'émulateur de processeur, qui occupe donc une place centrale dans un système de virtu.
-
-Pour contrôler des VMs KVM, il faut utiliser le démon `libvirtd`. Une fois qu'il est démarré, on peut l'utiliser pour gérer des VMs.
-
-???+ note
-
-    On ne l'utilisera pas nous-mêmes dans ce TP le démon `libvirtd` : c'est OpenNebula qui s'en servira pour créer des VMs.
-
-L'idée ici, dans le contexte du TP, c'est de préparer deux VMs avec l'hyperviseur KVM installé, et on permettra au noeud `frontend.one` de s'y connecter en SSH pour gérer des VMs.
-
-???+ note
-
-    Ui, OpenNebula repose sur OpenSSH entièrement pour la communication entre les diverses machines.  
-    Simpliste, mais surtout standard, largement éprouvé, secure et robuste !
-
 ## II. Setup
 
 ### 1. Frontend
 
-Le noeud `frontend.one` va héberger la logique de l'application, et exposer la WebUI ainsi que l'API.
-
-➜ **J'ai fait [un doc dédié pour le setup du frontend](frontend.md), déroulez-le en entier sur la machine `frontend.one` avant de continuer.**
+➜ **J'ai fait [un doc dédié pour le setup du frontend](./setup_frontend.md)..**
 
 ### 2. Noeuds KVM
 
-Le noeud `kvm1.one` va héberger un hyperviseur KVM. Il sera contrôlé par `frontend.one` (à travers SSH).
-
-➜ **J'ai fait [un doc dédié pour le setup des noeuds KVM](kvm.md), déroulez-le en entier, uniquement sur la machine `kvm1.one`, avant de continuer.**
-
-???+ note
-
-    On configurera `kvm2.one` plus tard !
+➜ **J'ai fait [un doc dédié pour le setup des noeuds KVM](./setup_noeuds_kvm.md.md).**
 
 ### 3. Réseau
 
-On va créer un réseau VXLAN pour que les VMs pourront utiliser pour communiquer.
-
-???+ info
-
-    VXLAN c'est une techno d'overlay networking. Cela permet d'avoir des réseaux virtuels par dessus un réseau physique.  
-    Les switches et routeurs physiques de l'infra ne voient pas le trafic entre les VMs, ils voient seulement les hyperviseurs qui échangent beaucoup de trames.  
-    VXLAN permet, si deux VMs s'échangent des messages, alors qu'elles sont physiquement réparties sur deux hyperviseurs différents, elles auront l'illusion d'être dans le même LAN physique (alors que potentiellement séparée par des milliers de km)
-
-➜ **Pouif, là encore, j'ai fait [un doc dédié pour le setup du réseau](network.md), déroulez-le en entier, avant de continuer.**
-
-- les commandes ne sont à effectuer que `kvm1.one`
-- le setup de `kvm2.one` ne viendra que dans la partie IV du TP
+➜ **Pouif, là encore, j'ai fait [un doc dédié pour le setup du réseau](./setup_reseaux.md.md).**
 
 ## III. Utiliser la plateforme
 
-Bah ouais il serait temps nan. Pop des ptites VMs.
-
-OpenNebula fournit des images toutes prêtes, ready-to-use, qu'on peut lancer au sein de notre plateforme Cloud.
-
-➜ **RDV de nouveau sur la WebUI de OpenNebula, et naviguez dans `Settings > Onglet Auth`**
-
-- OpenNebula a généré une paire de clé sur la machine `frontend.one`
-- elle se trouve dans le dossier `.ssh` dans le homedir de l'utilisateur `oneadmin`
-- déposez la clé publique dans cet interface de la WebUI
-
-???+ note
-
-    *Dans un cas réel, on poserait clairement une autre clé, la nôtre.  
-    On pourrait aussi en déposer plusieurs, s'il y a plusieurs admins dans la boîte. Ca pourrait se faire avec une image custom et du `cloud-init` par exemple.  
-    Là on fait ça comme ça, pour pas vous brainfuck avec 14 clés différentes. Appelez-moi pour un setup propre si vous voulez.*
-
-➜ **Toujours sur la WebUI de OpenNebula, naviguez dans `Storage > Apps`**
-
-Récupérez l'image de Rocky Linux 9 dans cette interface.
-
-???+ note
-
-    Les images proposées par les gars d'OpenNebula, on peut s'y connecter qu'en SSH, il faudra donc pouvoir les joindre par le réseau pour les utiliser.
-
 ➜ **Toujouuuuurs sur la WebUI de OpenNebula, naviguez dans `Instances > VMs`**
 
-- créez votre première VM :
-
-    - doit utiliser l'image Rocky Linux 9 qu'on a créé précédemment
-    - doit utiliser le virtual network créé précédemment
+![vm](/Images/vm.png)
 
 ➜ **Tester la connectivité à la VM**
 
-- déjà est-ce qu'on peut la ping ?
-
-    - depuis le noeud `kvm1.one`, faites un `ping` vers l'IP de la VM
-    - l'IP de la VM est visible dans la WebUI
-
-- pour pouvoir se co en SSH, il faut utiliser la clé de `oneadmin`, suivez le guide :
-
 ```bash
-# connectez vous en SSH sur la machine frontend.one
-
-# devenez l'utilisateur oneadmin
-[it4@frontend ~]$ sudo su - oneadmin
-
-# lancez un agent SSH (demandez-moi si vous voulez une explication sur ça)
 [oneadmin@frontend ~]$ eval $(ssh-agent)
-
-# ajoutez la clé privée à l'agent SSH
+Agent pid 5255
 [oneadmin@frontend ~]$ ssh-add
-Identity added: /var/lib/one/.ssh/id_rsa (oneadmin@frontend)
+Identity added: /var/lib/one/.ssh/id_rsa (oneadmin@frontend.one)
+[oneadmin@frontend ~]$ ssh -J kvm1 root@192.168.69.69
+Activate the web console with: systemctl enable --now cockpit.socket
 
-# rebondir sur kvm1 pour se connecter à la VM qui a l'IP 10.220.220.100
-[oneadmin@frontend ~]$ ssh -J kvm1 root@10.220.220.100
-
-# on est co dans la VM
-[root@localhost ~]# 
-```
-
-➜ **Si vous avez bien un shell dans la VM, vous êtes au bout des péripéties, pour un setup basique !**
-
-- vous pouvez éventuellement ajouter l'IP de la machine hôte comme route par défaut pour avoir internet (l'IP du bridge VXLAN de l'hôte) :
-
-```bash
-[root@localhost ~]# ip route add default via 10.220.220.201
-[root@localhost ~]# ping 1.1.1.1
+[root@localhost ~]#
 ```
 
 ## IV. Ajouter d'un noeud et VXLAN

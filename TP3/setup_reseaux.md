@@ -20,24 +20,13 @@
 [antna@kvm1 ~]$ sudo nano /usr/local/sbin/setup-vxlan-bridge.sh
 
 #!/bin/bash
-# Script de création et configuration du bridge vxlan_bridge
 
-# Création du bridge
 ip link add name vxlan_bridge type bridge
-
-# Activation du bridge
 ip link set dev vxlan_bridge up
+ip addr add 192.168.69.60/24 dev vxlan_bridge
 
-# Attribution d'une IP
-ip addr add 10.220.220.201/24 dev vxlan_bridge
-
-# Ajout à la zone public de firewalld
 firewall-cmd --add-interface=vxlan_bridge --zone=public --permanent
-
-# Activation du masquerading NAT
 firewall-cmd --add-masquerade --permanent
-
-# Reload du firewall
 firewall-cmd --reload
 
 [antna@kvm1 ~]$ sudo chmod +x /usr/local/sbin/setup-vxlan-bridge.sh
@@ -46,20 +35,6 @@ firewall-cmd --reload
 ```bash
 [antna@kvm1 ~]$ sudo nano /etc/systemd/system/vxlan-bridge.service
 
-#!/bin/bash
-
-ip link add name vxlan_bridge type bridge
-
-ip link set dev vxlan_bridge up
-
-ip addr add 10.220.220.201/24 dev vxlan_bridge
-
-firewall-cmd --add-interface=vxlan_bridge --zone=public --permanent
-
-firewall-cmd --add-masquerade --permanent
-
-firewall-cmd --reload
-[antna@kvm1 ~]$ cat /etc/systemd/system/vxlan-bridge.service
 [Unit]
 Description=Setup VXLAN bridge
 After=network.target firewalld.service

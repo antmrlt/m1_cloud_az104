@@ -108,6 +108,8 @@ sudo systemctl enable libvirtd
 ```sh
 [antna@kvm1 ~]$ sudo firewall-cmd --permanent --add-service=ssh
 success
+[antna@kvm1 ~]$ sudo firewall-cmd --add-port=8472/udp --permanent
+success
 [antna@kvm1 ~]$ sudo firewall-cmd --reload
 success
 ```
